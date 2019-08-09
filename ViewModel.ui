@@ -152,7 +152,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="posXSBox">
+                <widget class="QDoubleSpinBox" name="imageItemPosXSBox">
                  <property name="enabled">
                   <bool>false</bool>
                  </property>
@@ -194,7 +194,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="posYSBox">
+                <widget class="QDoubleSpinBox" name="imageItemPosYSBox">
                  <property name="enabled">
                   <bool>false</bool>
                  </property>
@@ -236,7 +236,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="spinCenterXSBox">
+                <widget class="QDoubleSpinBox" name="imageItemSpinCenterXSBox">
                  <property name="enabled">
                   <bool>false</bool>
                  </property>
@@ -278,7 +278,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="spinCenterYSBox">
+                <widget class="QDoubleSpinBox" name="imageItemSpinCenterYSBox">
                  <property name="enabled">
                   <bool>false</bool>
                  </property>
@@ -320,7 +320,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="spinAngleSBox">
+                <widget class="QDoubleSpinBox" name="imageItemSpinAngleSBox">
                  <property name="enabled">
                   <bool>false</bool>
                  </property>

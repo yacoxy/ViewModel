@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+#include "SceneModelGloabl.h"
+
 namespace Ui {
 class ViewModel;
 }
@@ -24,31 +26,32 @@ public:
 
 public slots:
     /**************ImageItem slots*********************/
-    void loadBackgroudImage();
-    void loadImageItemImage();
+    void loadImage();
 
     void imageItemParamChanged();
 
-    void imagePosChanged(QPointF pos);
+    void imagePosChanged();
     void imageSpinChanged(QPointF spinCenter,double spinAngle);
 
     /***************ShapeItem slots********************/
-    void switchShapeItem();
+    void switchShapeItem(int type);
 
-    void shapeDataChanged_FromWidget();
+    void shapeDataChanged_FromWidget(QList<double> &data);
     void shapeDataChanged_FromItem();
 
     /***************PointItem slots********************/
-    void addPoint(QPointF pos = QPointF(100,100));
+    void addPoint(QPointF point = QPointF(100,100));
     void delPoint();
 
-    void blockPosChanged(int id,QPointF pos);
-    void selectionChanged();
-
-    void posValueChanged(int row,int column);
+    void pointItemPosChanged(PointID id,QPointF pos);
+    void selectionChangedFromItem();
+    void selectionChangedFromWidget();
 
     /***************ScenModel slots********************/
     void mousePoschanged(QPointF mousePos,QRgb rgb,bool hasRgb);
+
+private:
+    void imageItemUIOperation(bool enable);
 
 private:
     Ui::ViewModel *ui;
@@ -60,7 +63,7 @@ private:
 
     ShapeItem *m_shapeItem;             //ShapeItem
 
-    QList<PointItem *> m_poitnItemList; //PointItem list
+    QList<PointItem *> m_pointItemList; //PointItem list
 };
 
 #endif // VIEWMODEL_H
