@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Icon/cicle.png</file>
+        <file>Icon/eclipse.png</file>
+        <file>Icon/line.png</file>
+        <file>Icon/rectangle.png</file>
+        <file>Icon/rotaryrectangle.png</file>
+        <file>Icon/sector.png</file>
+    </qresource>
+</RCC>
