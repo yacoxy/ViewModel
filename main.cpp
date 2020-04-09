@@ -1,4 +1,4 @@
-#include "ViewModel.h"
+﻿#include "ViewModel.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])

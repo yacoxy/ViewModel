@@ -1,4 +1,4 @@
-#ifndef VIEWMODEL_H
+﻿#ifndef VIEWMODEL_H
 #define VIEWMODEL_H
 
 #include <QMainWindow>
@@ -44,6 +44,7 @@ public slots:
     void delPoint();
 
     void pointItemPosChanged(PointID id,QPointF pos);
+    void posValueChangedFromWidget(int,int);
     void selectionChangedFromItem();
     void selectionChangedFromWidget();
 

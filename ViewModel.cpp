@@ -1,4 +1,4 @@
-#include "ViewModel.h"
+﻿#include "ViewModel.h"
 #include "ui_ViewModel.h"
 
 #include <QFileDialog>
@@ -9,6 +9,8 @@
 #include "ShapeItem.h"
 #include "PointItem.h"
 #include "SceneModel.h"
+
+#include "SpinBoxDelegate.h"
 
 ViewModel::ViewModel(QWidget *parent)
     : QMainWindow(parent)
@@ -37,8 +39,9 @@ ViewModel::ViewModel(QWidget *parent)
 
     //PointItem page
     ui->pointItemTablewidget->setSelectionBehavior(QAbstractItemView::SelectRows);
-    connect(ui->pointItemTablewidget,SIGNAL(itemSelectionChanged()),this,SLOT(selectionChanged_FromTableWidget()));
-    connect(ui->pointItemTablewidget,SIGNAL(cellChanged(int,int)),this,SLOT(posValueChanged_FromTableWidget(int,int)));
+    ui->pointItemTablewidget->setItemDelegate(new SpinBoxDelegate(false, -10000, 10000));
+    connect(ui->pointItemTablewidget,SIGNAL(itemSelectionChanged()),this,SLOT(selectionChangedFromWidget()));
+    connect(ui->pointItemTablewidget,SIGNAL(cellChanged(int,int)),this,SLOT(posValueChangedFromWidget(int,int)));
     connect(ui->addPointItemBut,SIGNAL(clicked(bool)),this,SLOT(addPoint()));
     connect(ui->delPointItemBut,SIGNAL(clicked(bool)),this,SLOT(delPoint()));
 }
@@ -46,6 +49,10 @@ ViewModel::ViewModel(QWidget *parent)
 ViewModel::~ViewModel()
 {
     delete ui;
+
+    if(m_sceneModel){
+        delete m_sceneModel;
+    }
 }
 
 void ViewModel::loadImage()
@@ -227,8 +234,25 @@ void ViewModel::pointItemPosChanged(PointID id, QPointF pos)
         return;
     }
 
+    disconnect(ui->pointItemTablewidget,SIGNAL(cellChanged(int,int)),this,SLOT(posValueChangedFromWidget(int,int)));
     ui->pointItemTablewidget->item(id,0)->setText(QString::number(pos.x()));
     ui->pointItemTablewidget->item(id,1)->setText(QString::number(pos.y()));
+    connect(ui->pointItemTablewidget,SIGNAL(cellChanged(int,int)),this,SLOT(posValueChangedFromWidget(int,int)));
+}
+
+void ViewModel::posValueChangedFromWidget(int row, int column)
+{
+    if(row >= m_pointItemList.length() || column >= 2){
+        return;
+    }
+
+    int posx = ui->pointItemTablewidget->item(row, 0)->text().toInt();
+    int posy = ui->pointItemTablewidget->item(row, 1)->text().toInt();
+
+    PointItem *item = m_pointItemList.at(row);
+    disconnect(item,SIGNAL(posChanged(PointID,QPointF)),this,SLOT(pointItemPosChanged(PointID,QPointF)));
+    item->setPos(posx,posy);
+    connect(item,SIGNAL(posChanged(PointID,QPointF)),this,SLOT(pointItemPosChanged(PointID,QPointF)));
 }
 
 void ViewModel::selectionChangedFromItem()
