@@ -10,7 +10,7 @@
 
 #include <QDebug>
 
-const double scaleMax = 8.0;
+const double scaleMax = 128.0;
 const double scaleMin = 1 / scaleMax;
 
 SceneModel::SceneModel(double sceneWidth,double sceneHeight)
