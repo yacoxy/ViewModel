@@ -10,17 +10,17 @@
 
 #include <QDebug>
 
-const double scaleMax = 128.0;
-const double scaleMin = 1 / scaleMax;
+const double scaleMax = 50.0;
+const double scaleMin = 0.01;
 
 SceneModel::SceneModel(double sceneWidth,double sceneHeight)
     : m_sceneWidth(sceneWidth)
     , m_sceneHeight(sceneHeight)
-    , m_scale(1)
     , m_histogramItem(nullptr)
+    , m_scale(1)
     , m_pressed(false)
 {
-    setBackgroundBrush(QBrush(QColor(70,70,70)));
+    setBackgroundBrush(QBrush(Qt::transparent));
 }
 
 SceneModel::~SceneModel()
@@ -31,6 +31,49 @@ SceneModel::~SceneModel()
 double SceneModel::getScale()
 {
     return m_scale;
+}
+
+void SceneModel::setScale(double scale)
+{
+    QGraphicsView *graphicsView = views().isEmpty() ? nullptr : views().at(0);
+    if(graphicsView == nullptr){
+        return;
+    }
+
+    if(m_scale == scale){
+        return;
+    }
+    m_scale = scale;
+
+    QTransform transform = graphicsView->transform();
+    transform.reset();
+    transform.scale(m_scale,m_scale);
+    graphicsView->setTransform(transform);
+
+    for(int i=0;i<m_imageItemList.length();i++){
+        if(!m_imageItemList[i]->isFixed()){
+            m_imageItemList[i]->setScaleValue(m_scale);
+        }
+    }
+
+    for(int i=0;i<m_pointItemList.length();i++){
+        m_pointItemList[i]->setScaleValue(m_scale);
+    }
+
+    for(int i=0;i<m_shapeItemList.length();i++){
+        m_shapeItemList[i]->setScaleValue(m_scale);
+    }
+
+    if(m_histogramItem){
+        m_histogramItem->setScale(m_scale);
+    }
+
+    emit scaleChanged(m_scale);
+}
+
+QSize SceneModel::sceneSize()
+{
+    return QSize(m_sceneWidth, m_sceneHeight);
 }
 
 void SceneModel::setSceneSize(double width, double height)
@@ -87,6 +130,12 @@ ImageItem *SceneModel::addImageItem(const QPixmap &image,bool isBackgroud)
     }
 
     imageItem->setScaleValue(m_scale);
+
+    emit scaleChanged(m_scale);
+
+    if(parentView){
+        parentView->setDragMode(QGraphicsView::ScrollHandDrag);
+    }
 
     return imageItem;
 }
@@ -200,23 +249,23 @@ void SceneModel::clearAll()
 
 void SceneModel::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    QPointF mousePos = event->scenePos();
-    QRgb rgb = 0;
-    bool hasRGB = false;
     if(m_imageItemList.isEmpty()){
-        emit mousePosChanged(mousePos,rgb,hasRGB);
         QGraphicsScene::mouseMoveEvent(event);
         return;
     }
+
+    QPointF mousePos = event->scenePos();
+    QRgb rgb = 0;
+    bool hasRGB = false;
     for(int i=m_imageItemList.length() - 1;i>=0;i--){
         QPointF itemPos = m_imageItemList[i]->mapFromScene(mousePos);
         if(m_imageItemList[i]->contains(itemPos) && m_imageItemList[i]->isVisible()){
             hasRGB = true;
-            rgb = m_imageItemList[i]->pixmap().toImage().pixel(itemPos.toPoint());
+            rgb = m_imageItemList[i]->pixmap().toImage().pixel(QPoint(itemPos.x() / 1, itemPos.y() / 1));
             break;
         }
     }
-    emit mousePosChanged(mousePos,rgb,hasRGB);
+    emit mousePosChanged(mousePos, rgb, hasRGB);
     QGraphicsScene::mouseMoveEvent(event);
 }
 
@@ -248,35 +297,14 @@ void SceneModel::wheelEvent(QGraphicsSceneWheelEvent *event)
         delta *= -1;
     }
 
-    double scaleFactor = pow((double)2, delta);
+    double scaleFactor = pow((double)2, delta) * m_scale;
 
-    if((graphicsView->matrix().m11() < scaleMax && scaleFactor > 1) ||
-        (graphicsView->matrix().m11() > scaleMin && scaleFactor < 1)){
-        //大致保存当前的放大倍数，用于画特征点时设置笔宽
-        m_scale *= scaleFactor;
-        QTransform transform = graphicsView->transform();
-        transform.reset();
-        transform.scale(m_scale,m_scale);
-        graphicsView->setTransform(transform);
-
-        for(int i=0;i<m_imageItemList.length();i++){
-            if(!m_imageItemList[i]->isFixed()){
-                m_imageItemList[i]->setScaleValue(m_scale);
-            }
-        }
-
-        for(int i=0;i<m_pointItemList.length();i++){
-            m_pointItemList[i]->setScaleValue(m_scale);
-        }
-
-        for(int i=0;i<m_shapeItemList.length();i++){
-            m_shapeItemList[i]->setScaleValue(m_scale);
-        }
-
-        if(m_histogramItem){
-            m_histogramItem->setScale(m_scale);
-        }
+    if(scaleFactor > scaleMax){
+        scaleFactor = scaleMax;
+    }else if(scaleFactor < scaleMin){
+        scaleFactor = scaleMin;
     }
+    setScale(scaleFactor);
 
     event->accept();
 }

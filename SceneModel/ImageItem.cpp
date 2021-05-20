@@ -82,6 +82,13 @@ QSizeF ImageItem::imageSize()
     return QSizeF(m_imageWidth,m_imageHeight);
 }
 
+void ImageItem::setImage(const QPixmap &pixmap)
+{
+    m_imageWidth = pixmap.width();
+    m_imageHeight = pixmap.height();
+    setPixmap(pixmap);
+}
+
 void ImageItem::refresh()
 {
     double arrowWidth = ArrowWidth / m_scale;
@@ -253,6 +260,8 @@ void ImageItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
         BaseItem::contextMenuEvent(event);
         return;
     }
+    event->accept();
+    return;
 
     QGraphicsView *parentView = scene()->views().isEmpty() ? nullptr : scene()->views().first();
     if(parentView == nullptr){

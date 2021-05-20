@@ -21,6 +21,7 @@ public:
     void setDrawCoordinate(bool state);
 
     QSizeF imageSize();
+    void setImage(const QPixmap &pixmap);
 
 private:
     void refresh();

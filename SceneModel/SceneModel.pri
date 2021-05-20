@@ -7,9 +7,7 @@ HEADERS += \
     $$PWD/PointItem.h \
     $$PWD/SceneModel.h \
     $$PWD/SceneModelGloabl.h \
-    $$PWD/ShapeItem.h \
-    $$PWD/SpinBoxDelegate.h \
-    $$PWD/toolbox.h
+    $$PWD/ShapeItem.h
 
 SOURCES += \
     $$PWD/BaseItem.cpp \
@@ -17,6 +15,4 @@ SOURCES += \
     $$PWD/ImageItem.cpp \
     $$PWD/PointItem.cpp \
     $$PWD/SceneModel.cpp \
-    $$PWD/ShapeItem.cpp \
-    $$PWD/SpinBoxDelegate.cpp \
-    $$PWD/toolbox.cpp
+    $$PWD/ShapeItem.cpp

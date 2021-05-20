@@ -28,7 +28,9 @@ public:
     virtual ~SceneModel();
 
     double getScale();
+    void setScale(double scale);
 
+    QSize sceneSize();
     void setSceneSize(double width,double height);
 
     PointItem * addPointItem(QPointF point,bool isFixed);
@@ -49,6 +51,8 @@ public:
 signals:
     void mousePosChanged(QPointF mousePos,QRgb rgb,bool hasRGB);
     void mouseClicked(QPointF clickPos);
+
+    void scaleChanged(double scale);
 
 private:
     double m_sceneWidth;
